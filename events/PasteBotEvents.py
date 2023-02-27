@@ -3,6 +3,7 @@
 from pathlib 					import Path
 from glob						import glob
 from datetime 					import datetime, timedelta
+from discord.ext				import tasks
 import discord
 import shutil
 import requests
@@ -18,6 +19,23 @@ def setupEvents():
 	@Variables.pasteBotClient.event
 	async def on_ready():
 		print('Initialized client as {0.user}.'.format(Variables.pasteBotClient))
+
+		update_presence.start()
+
+		return
+
+	@tasks.loop(seconds=60.0)
+	async def update_presence():
+		if Constants.isDevEnvironment:
+			await Variables.pasteBotClient.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="ModularPasteBot"))
+			return
+
+		serverCount = len(Variables.pasteBotClient.guilds)
+		status = str(serverCount) + " server"
+		if serverCount > 1:
+			status += "s"
+
+		await Variables.pasteBotClient.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name=status))
 
 		return
 
