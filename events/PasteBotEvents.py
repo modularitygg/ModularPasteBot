@@ -49,14 +49,14 @@ def setupEvents():
 
 		if len(attachments) > 0:
 			for attachment in attachments:
-				if not str(attachment.content_type).startswith("text"):
+				filename = attachment.filename
+				if not str(attachment.content_type).startswith("text") and not filename.endswith(".bat"):
 					continue
 
 				size = attachment.size
 				if size > 8000000:
 					continue
 
-				filename = attachment.filename
 				url = attachment.url
 				urlsuffix = url.split("discordapp.com/attachments/")[1]
 
