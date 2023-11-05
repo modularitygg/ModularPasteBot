@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 #!/usr/bin/env python
 from pathlib 					import Path
-from glob						import glob
+from glob					import glob
 from datetime 					import datetime, timedelta
 from discord.ext				import tasks
+from urllib.parse				import urlparse, urlunparse
 import discord
 import shutil
 import requests
@@ -11,8 +12,8 @@ import time
 import os
 import sys
 
-from data						import Constants, Folders, Variables
-from view						import PasteBotButtons
+from data					import Constants, Folders, Variables
+from view					import PasteBotButtons
 
 def setupEvents():
 
@@ -58,6 +59,12 @@ def setupEvents():
 					continue
 
 				url = attachment.url
+
+				# Parse URL as URL
+				parsed_url = urlparse(url)
+				# Remove the query part of the URL and stuff back into the url variable
+				url = urlunparse(parsed_url._replace(query=''))
+				
 				urlsuffix = url.split("discordapp.com/attachments/")[1]
 
 				original_output_file_path = Folders.getPasteWebRoot() + Constants.sep + urlsuffix.replace("/", "_").replace("_" + filename, "")
