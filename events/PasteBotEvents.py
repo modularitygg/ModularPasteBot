@@ -97,6 +97,12 @@ def setupEvents():
 			for attachment in attachments:
 				filename = attachment.filename
 				url = attachment.url
+
+				# Parse URL as URL
+				parsed_url = urlparse(url)
+				# Remove the query part of the URL and stuff back into the url variable
+				url = urlunparse(parsed_url._replace(query=''))
+				
 				urlsuffix = url.split("discordapp.com/attachments/")[1]
 
 				file_path = Folders.getPasteWebRoot() + Constants.sep + urlsuffix.replace("/", "_").replace("_" + filename, "") + Constants.sep + filename
