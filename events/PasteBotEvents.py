@@ -4,7 +4,7 @@ from pathlib 					import Path
 from glob					import glob
 from datetime 					import datetime, timedelta
 from discord.ext				import tasks
-from urllib.parse				import urlparse, urlunparse
+from urllib.parse				import urlparse, urlunparse, quote_plus
 import discord
 import shutil
 import requests
@@ -63,9 +63,9 @@ def setupEvents():
 				# Parse URL as URL
 				parsed_url = urlparse(url)
 				# Remove the query part of the URL and stuff back into the url variable
-				url = urlunparse(parsed_url._replace(query=''))
-				
-				urlsuffix = url.split("discordapp.com/attachments/")[1]
+				fixed_url = urlunparse(parsed_url._replace(query=''))
+
+				urlsuffix = fixed_url.split("discordapp.com/attachments/")[1]
 
 				original_output_file_path = Folders.getPasteWebRoot() + Constants.sep + urlsuffix.replace("/", "_").replace("_" + filename, "")
 				Path(original_output_file_path).mkdir(parents=True, exist_ok=True)
@@ -80,7 +80,7 @@ def setupEvents():
 
 				output = "Paste created of `" + filename + "`, uploaded by `" + message.author.display_name + "`."
 
-				pasteView = PasteBotButtons.PasteButtons(Constants.getPasteBotUrlPrefix() + url)
+				pasteView = PasteBotButtons.PasteButtons(Constants.getPasteBotUrlPrefix() + quote_plus(fixed_url))
 				await message.channel.send(output, view=pasteView)
 
 		return
